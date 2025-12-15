@@ -9,10 +9,10 @@ import os
 from dotenv import load_dotenv
 import streamlit as st
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.schema import HumanMessage
+from langchain.schema import HumanMessage
 from langchain_openai import ChatOpenAI
-from langchain_core.chains import create_history_aware_retriever, create_retrieval_chain
-from langchain_core.chains.combine_documents import create_stuff_documents_chain
+from langchain.chains import create_history_aware_retriever, create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
 import constants as ct
 
 
