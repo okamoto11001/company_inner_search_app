@@ -34,7 +34,7 @@ narwhals==2.13.0
 numpy==2.3.5
 orjson==3.11.5
 ormsgpack==1.12.1
-packaging==24.2
+packaging==25.0
 pandas==2.3.3
 pillow==11.3.0
 protobuf==5.29.5
