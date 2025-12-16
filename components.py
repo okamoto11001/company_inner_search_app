@@ -13,6 +13,25 @@ import constants as ct
 ############################################################
 # 関数定義
 ############################################################
+def display_doc_search_description():
+    st.markdown("**【「社内文書検索」を選択した場合】**")
+    st.info("入力内容と関連性が高い社内文書のありかを検索できます。")
+    st.code(
+        "【入力例】\n社員の育成方針に関するMTGの議事録",
+        wrap_lines=True,
+        language=None
+    )
+
+
+def display_inquiry_description():
+    st.markdown("**【「社内問い合わせ」を選択した場合】**")
+    st.info("質問・要望に対して、社内文書の情報をもとに回答を得られます。")
+    st.code(
+        "【入力例】\n人事部に所属している従業員情報を一覧化して",
+        wrap_lines=True,
+        language=None
+    )
+
 
 def display_app_title():
     """
@@ -26,10 +45,9 @@ def display_select_mode():
     回答モードのラジオボタンを表示
     """
     # 回答モードを選択する用のラジオボタンを表示
-    col1, col2 = st.columns([100, 1])
-    with col1:
-        # 「label_visibility="collapsed"」とすることで、ラジオボタンを非表示にする
-        st.session_state.mode = st.radio(
+    st.sidebar.markdown("### 利用目的の選択")
+
+    st.session_state.mode = st.sidebar.radio(
             label="",
             options=[ct.ANSWER_MODE_1, ct.ANSWER_MODE_2],
             label_visibility="collapsed"
@@ -42,7 +60,22 @@ def display_initial_ai_message():
     """
     with st.chat_message("assistant"):
         # 「st.success()」とすると緑枠で表示される
-        st.markdown("こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。上記で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。")
+        # 共通の挨拶は中央
+        st.success("こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。上記で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。")
+        st.warning("⚠具体的に入力したほうが期待通りの回答を得やすいです。")
+                # モードに応じて中央に出す説明を切り替え
+        if st.session_state.mode == ct.ANSWER_MODE_1:
+            display_doc_search_description()
+        else:
+            display_inquiry_description()
+
+    # 非選択モードの説明はサイドバーへ
+    with st.sidebar:
+        st.markdown("### 利用方法の補足")
+    #    if st.session_state.mode == ct.ANSWER_MODE_1:
+    #        display_inquiry_description()
+    #    else:
+    #        display_doc_search_description()
 
         # 「社内文書検索」の機能説明
         st.markdown("**【「社内文書検索」を選択した場合】**")
