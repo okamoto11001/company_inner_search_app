@@ -19,7 +19,8 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 import constants as ct
-
+import csv
+from langchain.schema import Document
 
 ############################################################
 # 設定関連
@@ -31,6 +32,38 @@ load_dotenv()
 ############################################################
 # 関数定義
 ############################################################
+def load_employee_csv_as_single_document(path):
+    """
+    社員名簿CSVを1つのDocumentとして読み込む
+    """
+    employees = []
+
+    with open(path, encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            employees.append(
+                f"- 社員ID: {row.get('社員ID')} "
+                f"/ 氏名: {row.get('氏名（フルネーム）')} "
+                f"/ 役職: {row.get('役職')} "
+                f"/ 従業員区分: {row.get('従業員区分')} "
+                f"/ 年齢: {row.get('年齢')} "
+                f"/ スキル: {row.get('スキルセット')}"
+            )
+
+    text = (
+        "以下は社員名簿の一覧です。\n"
+        "部署別・条件別に社員情報を整理するためのデータです。\n\n"
+        "【社員一覧】\n"
+        + "\n".join(employees)
+    )
+
+    return [
+        Document(
+            page_content=text,
+            metadata={"source": path}
+        )
+    ]
+
 
 def initialize():
     """
@@ -213,11 +246,19 @@ def file_load(path, docs_all):
     file_name = os.path.basename(path)
 
     # 想定していたファイル形式の場合のみ読み込む
-    if file_extension in ct.SUPPORTED_EXTENSIONS:
+    # if file_extension in ct.SUPPORTED_EXTENSIONS:
         # ファイルの拡張子に合ったdata loaderを使ってデータ読み込み
+    #    loader = ct.SUPPORTED_EXTENSIONS[file_extension](path)
+    #    docs = loader.load()
+    #    docs_all.extend(docs)
+    if file_extension == ".csv" and "社員名簿" in path:
+        docs = load_employee_csv_as_single_document(path)
+        docs_all.extend(docs)    
+    elif file_extension in ct.SUPPORTED_EXTENSIONS:
         loader = ct.SUPPORTED_EXTENSIONS[file_extension](path)
         docs = loader.load()
         docs_all.extend(docs)
+
 
 
 def adjust_string(s):
